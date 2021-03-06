@@ -1,0 +1,18 @@
+{
+    "name": "book-mgr-be",
+    "version": "1.0.0",
+    "description": "毕业设计",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "毕设"
+    ],
+    "author": "孙隽雄",
+    "license": "ISC",
+    "dependencies": {
+        "koa": "^2.13.1",
+        "mongoose": "^5.11.19"
+    }
+}
