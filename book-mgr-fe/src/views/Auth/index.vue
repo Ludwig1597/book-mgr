@@ -18,7 +18,11 @@
                     <div class="item">
                         
                         <!-- placeholder 占位符 -->
-                        <a-input size="large" placeholder="账户" >
+                        <a-input 
+                            size="large" 
+                            placeholder="账户" 
+                            v-model:value="loginForm.account"
+                        >
                             <!-- 预留小图标位置 -->
                             <template v-slot:prefix>
                                 <UserOutlined />
@@ -27,7 +31,11 @@
                     </div>
 
                     <div class="item">
-                        <a-input size="large" placeholder="密码" >
+                        <a-input 
+                            size="large" 
+                            placeholder="密码" 
+                            v-model:value="loginForm.password"
+                        >
                             <template v-slot:prefix>
                                 <LockOutlined />
                             </template>
@@ -39,7 +47,11 @@
                     </div>
 
                     <div class="item">
-                        <a-button size="large" type="primary"> 登入</a-button>
+                        <a-button 
+                            size="large" 
+                            type="primary"
+                            @click="login"
+                        > 登入</a-button>
                     </div>
                 </a-tab-pane>
                 <!-- 注册模块 -->
@@ -70,7 +82,11 @@
                     </div>
 
                     <div class="item">
-                        <a-input size="large" placeholder="邀请码">
+                        <a-input 
+                            size="large" 
+                            placeholder="邀请码"
+                            v-model:value="regForm.inviteCode"
+                        >
                             <template v-slot:prefix>
                                 <MailOutlined />
                             </template>
