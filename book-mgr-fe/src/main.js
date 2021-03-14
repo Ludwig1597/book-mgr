@@ -5,4 +5,5 @@ import router from './router'
 import store from './store'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
-createApp(App, Antd).use(store).use(router).use(Antd).mount('#app')
+import SpaceBetween from './components/SpaceBetween/index.vue';
+createApp(App, Antd).use(store).use(router).use(Antd).component('space-between', SpaceBetween).mount('#app')
