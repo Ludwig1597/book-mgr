@@ -1,0 +1,62 @@
+.basic-layout {
+    .app-header-placeholder {
+        height: 64px;
+        width: 100%;
+    }
+    .app-header {
+        height: 64px;
+        position: fixed; //固定在左上角
+        top: 0;
+        left: 0;
+        background-color: #fff;
+        box-shadow: 0 2px 8px #f0f1f2;
+        display: flex;
+        align-items: center; //在纵轴上所有元素垂直居中
+        justify-content: space-between; //元素两端对齐
+        padding: 0 16px;
+        width: 100%;
+        z-index: 1;
+        .left {
+            display: flex; //使文字和logo同一行布局
+            align-items: center; //在纵轴上垂直居中
+            img {
+                height: 50px;
+                margin-right: 16px;
+            }
+            .title {
+                color: rgba(0, 0, 0, .87);
+                font-size: 18px;
+            }
+        }
+        .right {
+            display: flex;
+            align-items: center;
+            .logout {
+                width: 80px;
+                text-align: center;
+                height: 64px;
+                line-height: 64px;
+                cursor: pointer;
+                margin-left: 16px;
+                &:hover {
+                    background: #eee;
+                }
+            }
+        }
+    }
+    .app-content {
+        display: flex; //作一个左右的排布
+        .left {
+            width: 256px;
+            background-color: #efefef;
+            position: fixed;
+            top: 64px;
+            bottom: 0; //这样就可以将左侧占满
+        }
+        .right {
+            flex: 1; //意思是把剩余空间都占满
+            padding: 24px;
+            margin-left: 256px; //因为已经不占位了，所以要把左侧空出来
+        }
+    }
+}
