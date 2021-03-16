@@ -1,4 +1,7 @@
 require('./Schemas/User'); //require一个文件就会去执行一个文件，执行之后schema就会被注册
+require('./Schemas/InviteCode');
+require('./Schemas/Book'); //注册好以后我们就可以通过mongoose.model去拿到注册好的模型去做一个数据库的操作
+
 const mongoose = require('mongoose');
 //明确三件事
 //给哪个数据库
