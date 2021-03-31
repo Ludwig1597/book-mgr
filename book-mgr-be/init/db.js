@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const { connect } = require('../src/db/index');
 const character = require('../src/helpers/character');
 const {
-    defaultChar
-    acters
+    defaultCharacters
 } = character;
 const Character = mongoose.model('Character');
 const User = mongoose.model('User');
@@ -20,7 +19,7 @@ connect()
         const user = new User({
             account: 'admin',
             password: 'admin',
-            character: characterList.find(item => (item.name === 'member'))._id,
+            character: characterList.find(item => (item.name === 'admin'))._id,
         });
 
         console.log('正在初始化用户：', user);

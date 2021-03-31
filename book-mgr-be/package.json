@@ -5,7 +5,10 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon src/index.js"
+        "dev": "nodemon src/index.js",
+        "serve": "node src/index.js",
+        "start": "pm2 start npm --name book-mgr -- run serve",
+        "stop": "pm2 kill book-mgr"
     },
     "keywords": [
         "毕设"
@@ -23,5 +26,8 @@
         "mongoose": "^5.11.19",
         "node-xlsx": "^0.16.1",
         "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "pm2": "^4.5.5"
     }
 }
