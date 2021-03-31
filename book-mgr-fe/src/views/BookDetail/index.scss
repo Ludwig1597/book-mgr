@@ -1,0 +1,23 @@
+.base-info {
+    .items {
+        display: flex;
+        margin-bottom: 16px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    .item {
+        flex: 1; //均等分
+        display: flex;
+        .title {
+            font-weight: 700;
+            color: rgba(0, 0, 0, .7);
+            min-width: 70px;
+        }
+        .content {}
+    }
+}
+
+.log {
+    margin-top: 24px;
+}

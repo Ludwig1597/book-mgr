@@ -1,9 +1,12 @@
 import { defineComponent, ref, onMounted, } from 'vue'; //ref响应式变量标记显示隐藏
-import { book } from '@/service';
+import { book,bookClassify } from '@/service';//把分类相关接口也拿过来
+import {useRouter} from 'vue-router';
 import { message, Modal,Input } from 'ant-design-vue';
 import { result, formatTimestamp } from '@/helpers/utils';
+import {getClassifyTitleById} from '@/helpers/book-classify';
 import AddOne from './AddOne/index.vue';
 import Update from './Update/index.vue';
+import { getHeaders } from '@/helpers/request';
 import { list } from '../../service/book';
 import { itemProps } from 'ant-design-vue/lib/vc-menu';
 
@@ -13,7 +16,13 @@ export default defineComponent({
         AddOne,
         Update,
     },
-    setup() {
+
+    props:{
+        simple:Boolean,
+    },
+
+    setup(props) {
+        const router=useRouter();
         // columns是一个数组，它每一项就代表每一列的配置项
         const columns = [{
                 title: '书名',
@@ -41,17 +50,27 @@ export default defineComponent({
             },
             {
                 title: '分类',
-                dataIndex: 'classify',
-            },
-            {
-                title: '操作',
                 slots: {
-                    customRender: 'actions',
+                    customRender: 'classify',
                 }
             },
+            // {
+            //     title: '操作',
+            //     slots: {
+            //         customRender: 'actions',
+            //     }
+            // },//根据simple去判断是否存在
 
         ];
 
+        if(!props.simple){
+            columns.push({
+                title: '操作',
+                slots: {
+                    customRender: 'actions',
+                }   
+            });
+        }
 
         const show = ref(false);
         const showUpdateModal=ref(false);
@@ -61,6 +80,20 @@ export default defineComponent({
         const keyword = ref(''); //ref是一个响应式的数据
         const isSearch = ref(false);
         const curEditBook=ref({});
+        //const bookClassifyList=ref([]);
+        //const classifyLoading=ref(true);
+
+        //获取书籍分类列表
+        /* const getBookClassify=async()=>{
+            classifyLoading.value=true;
+            const res=await bookClassify.list();
+            classifyLoading.value=false;//去给按钮加一个loading的属性
+
+            result(res)
+                .success(({data})=>{
+                    bookClassifyList.value=data;
+                })
+        } */
         //获取书籍列表
         const getList = async() => {
                 //调用接口
@@ -80,6 +113,7 @@ export default defineComponent({
             }
             //当组件被挂载完会做什么事情
         onMounted(async() => {
+            //await getBookClassify();//这个要先调用
             getList();
         });
         //设置页码
@@ -180,13 +214,38 @@ export default defineComponent({
                 }), */ //virtual Node 虚拟dom节点
             })
         }
+        //显示更新弹框
         const update=({record})=>{
             showUpdateModal.value=true;
             curEditBook.value=record;
         }
+        //更新列表的某一行数据
         const updateCurBook=(newData)=>{
             Object.assign(curEditBook.value,newData);
         }
+        //进入书籍详情页
+        const toDetail=({record})=>{
+            //我们怎么进到书籍详情页呢import {useRouter} from 'vue-router';
+            router.push(`/books/${record._id}`);
+        }
+
+        const onUploadChange = ({ file }) => {
+            //console.log(e);
+            if (file.response) {
+                result(file.response)
+                    .success(async(key) => {
+                        const res = await book.addMany(key);
+
+                        result(res)
+                            .success(({ data: { addCount } }) => {
+                                message.success(`成功添加${addCount}本书`)
+
+                                getList();
+                            })
+                    });
+            }
+        }
+
         return {
             columns,
             show,
@@ -205,6 +264,14 @@ export default defineComponent({
             update,
             curEditBook,
             updateCurBook,
+            toDetail,
+            getList,
+            //classifyLoading,
+            //bookClassifyList,//addOne要传递出来这个列表去给addone标签加上
+            getClassifyTitleById,
+            simple:props.simple,
+            onUploadChange,
+            headers: getHeaders(),
         };
     },
 });

@@ -2,6 +2,8 @@ const Router = require('@koa/router');
 const mongoose = require('mongoose');
 const { getBody } = require('../../helpers/utils'); //默认会去找index
 const jwt = require('jsonwebtoken');
+const config = require('../../project.config')
+
 //拿到数据库中的表/文档
 const User = mongoose.model('User');
 const InviteCode = mongoose.model('InviteCode');
@@ -111,6 +113,7 @@ authRouter.post('/login', async(ctx) => {
 
     const user = {
         account: one.account,
+        character: one.character,
         _id: one._id,
     };
     if (one.password === password) {
@@ -120,7 +123,7 @@ authRouter.post('/login', async(ctx) => {
             data: {
                 user,
                 //token: jwt.sign(one.toJSON(), 'book-mgr'),
-                token: jwt.sign(user, 'book-mgr'),
+                token: jwt.sign(user, config.JWT_SECRET),
             },
         };
         //alert('登入成功');

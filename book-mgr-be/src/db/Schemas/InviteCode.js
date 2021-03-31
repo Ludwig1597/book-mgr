@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 //导入公有的schema
-const { getMeta } = require('../helpers');
+const { getMeta, preSave } = require('../helpers');
 
 const InviteCodeSchema = new mongoose.Schema({
     //邀请码
@@ -10,6 +10,6 @@ const InviteCodeSchema = new mongoose.Schema({
 
     meta: getMeta(),
 });
-
+InviteCodeSchema.pre('save', preSave);
 //定义完要进行注册
 mongoose.model('InviteCode', InviteCodeSchema);

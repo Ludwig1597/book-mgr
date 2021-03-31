@@ -39,7 +39,8 @@
                 cursor: pointer;
                 margin-left: 16px;
                 &:hover {
-                    background: #eee;
+                    //background: #eee;
+                    color: orange;
                 }
             }
         }
@@ -48,7 +49,7 @@
         display: flex; //作一个左右的排布
         .left {
             width: 256px;
-            background-color: #efefef;
+            background-color: white;
             position: fixed;
             top: 64px;
             bottom: 0; //这样就可以将左侧占满

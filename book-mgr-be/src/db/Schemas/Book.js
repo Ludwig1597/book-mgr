@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { getMeta } = require('../helpers');
+const { getMeta, preSave } = require('../helpers');
 
 const BookSchema = new mongoose.Schema({
     //书名
@@ -16,5 +16,6 @@ const BookSchema = new mongoose.Schema({
     count: Number,
     meta: getMeta(),
 });
+BookSchema.pre('save', preSave);
 //我们可以用这个model和芒果db进行交互，但是目前还是注册不成功的，我们可以去db下的index.js进行注册执行
 mongoose.model('Book', BookSchema);

@@ -1,6 +1,7 @@
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, withCtx } from 'vue';
 import { book } from '@/service'; //然后就可以调用book下的add方法
 import { message } from 'ant-design-vue';
+import store from '@/store';
 import { result, clone } from '@/helpers/utils';
 
 const defaultFormData = {
@@ -14,10 +15,17 @@ const defaultFormData = {
 export default defineComponent({
     props: {
         show: Boolean,
+        //classifyList: Array, //来自index.vue的addone标签属性
+        //在store里写好了
     },
     setup(props, context) {
-        console.log(props);
+        //console.log(props);
         const addForm = reactive(clone(defaultFormData));
+
+        if (store.state.bookClassify.length) {
+            addForm.classify = store.state.bookClassify[0]._id;
+        }
+
         //这样我们就去调用了一下add接口，同时把我们的数据传递了过去
         const submit = async() => {
             //去把表单复制一份（深拷贝）,将data写成时间戳
@@ -31,6 +39,7 @@ export default defineComponent({
                 .success((d, { data }) => {
                     Object.assign(addForm, defaultFormData);
                     message.success(data.msg); //这个msg是服务端响应的
+                    context.emit('getList');
                 }); //这样就达到了一个清空表单的效果
 
         };
@@ -47,6 +56,7 @@ export default defineComponent({
             submit,
             props,
             close,
+            store: store.state,
         }
     },
 });

@@ -11,7 +11,19 @@ const getMeta = () => {
     }
 }
 
-//将这个方法导出出去
+const preSave = function(next) {
+        if (this.isNew) {
+            const ts = Date.now();
+
+            this['meta'].createdAt = ts;
+            this['meta'].updatedAt = ts;
+        } else {
+            this['meta'].updatedAt = Date.now();
+        }
+        next();
+    }
+    //将这个方法导出出去
 module.exports = {
     getMeta,
+    preSave,
 };

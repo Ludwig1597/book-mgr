@@ -1,0 +1,12 @@
+.searchaccount {
+    display: flex;
+    .search {
+        width: 200px;
+        align-items: center;
+    }
+    .back {
+        align-items: center;
+        line-height: 32px;
+        margin-left: 16px;
+    }
+}

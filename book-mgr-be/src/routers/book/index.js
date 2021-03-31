@@ -1,9 +1,24 @@
 const Router = require('@koa/router');
 const mongoose = require('mongoose');
+const config = require('../../project.config');
 const { getBody } = require('../../helpers/utils');
+const { loadExcel, getFirstSheet } = require('../../helpers/excel');
+const { v4: uuidv4 } = require('uuid');
 //把book的模型拿到
 const Book = mongoose.model('Book');
+//记录日志
+const InventoryLog = mongoose.model('InventoryLog');
+//去把分类拿进来
+const BookClassify = mongoose.model('BookClassify');
 
+//根据id找书的方法，封装一下
+const findBookOne = async(id) => {
+    const one = await Book.findOne({
+        _id: id,
+    }).exec();
+
+    return one;
+}
 const BOOK_CONST = {
     IN: 'IN_COUNT',
     OUT: 'OUT_COUNT',
@@ -65,6 +80,9 @@ router.get('/list', async(ctx) => {
     }
     const list = await Book
         .find(query)
+        .sort({
+            _id: -1, //倒序排序
+        })
         .skip((page - 1) * size) //跳过几条数据
         .limit(size)
         .exec();
@@ -115,9 +133,7 @@ router.post('/update/count', async(ctx) => {
 
     num = Number(num);
 
-    const book = await Book.findOne({
-        _id: id,
-    }).exec();
+    const book = await findBookOne(id);
     if (!book) {
         ctx.body = {
             code: 0,
@@ -150,6 +166,13 @@ router.post('/update/count', async(ctx) => {
 
     const res = await book.save(); //告诉mangoose数据改完了同步到数据库
 
+    const log = new InventoryLog({
+        num: Math.abs(num),
+        type,
+    });
+
+    log.save(); //event-loop
+
     ctx.body = {
         data: res,
         code: 1,
@@ -164,9 +187,7 @@ router.post('/update', async(ctx) => {
         } = ctx.request.body;
 
         //修改数据要先找到数据
-        const one = await Book.findOne({
-            _id: id,
-        }).exec();
+        const one = await findBookOne(id);
         //如果没找到
         if (!one) {
             ctx.body = {
@@ -193,4 +214,90 @@ router.post('/update', async(ctx) => {
 
     })
     //router.post('/update')
+
+router.get('/detail/:id', async(ctx) => {
+    const {
+        id,
+    } = ctx.params;
+    /* const one = await Book.findOne({
+        _id: id,
+    }).exec(); */
+    const one = await findBookOne(id);
+    //如果没找到
+    if (!one) {
+        ctx.body = {
+            msg: '没有找到书籍',
+            code: 0,
+        }
+        return;
+    }
+    ctx.body = {
+        msg: '查询成功',
+        data: one, //data是one，one就是找到的书
+        code: 1,
+    }
+});
+
+router.post('/addMany', async(ctx) => {
+    const {
+        key = '',
+    } = ctx.request.body;
+
+    const path = `${config.UPLOAD_DIR}/${key}`;
+
+    // loadExcel, getFirstSheet 
+    const excel = loadExcel(path);
+
+    const sheet = getFirstSheet(excel);
+
+    /* const character = await Character.find().exec();
+    console.log(character); 
+    const member = character.find((item) => (item.name === 'member'));*/
+
+    const arr = [];
+    for (let i = 0; i < sheet.length; i++) {
+        let record = sheet[i];
+        //const [account, password = config.DEFAULT_PASSWORD] = record;
+        //不去拿用户的相关信息，去拿书籍的相关信息
+        const [
+            name,
+            price,
+            author,
+            publishDate,
+            classify,
+            count,
+        ] = record;
+
+        let classifyId = classify;
+
+        const one = await BookClassify.findOne({
+            title: classify,
+        });
+
+        if (one) {
+            classifyId = one._id;
+        }
+
+        arr.push({
+            name,
+            price,
+            author,
+            publishDate,
+            classify: classifyId,
+            count,
+        });
+
+    }
+    await Book.insertMany(arr);
+
+    ctx.body = {
+        code: 1,
+        msg: '添加成功',
+        data: {
+            addCount: arr.length,
+        }
+
+    };
+});
+
 module.exports = router;
